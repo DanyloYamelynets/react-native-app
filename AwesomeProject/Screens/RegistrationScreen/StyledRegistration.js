@@ -34,12 +34,12 @@ export const StyledInput = styled.TextInput`
   background-color: #f6f6f6;
   border-width: 1px;
   border-style: solid;
-  border-color: #e8e8e8;
   padding: 0 16px;
   border-radius: 8px;
   font-family: "Roboto";
   font-size: 16px;
   color: #212121;
+  border-color: ${(props) => (props.isFocused ? "#FF6C00" : "#e8e8e8")};
 `;
 export const RegisterBtn = styled.TouchableOpacity`
   height: 51px;
