@@ -29,7 +29,7 @@ export const LoginScreen = () => {
   };
 
   const onLogin = () => {
-    if (!login || !email || !password) {
+    if (!email || !password) {
       return Alert.alert("Fill in all fields");
     }
     resetForm();
@@ -37,7 +37,6 @@ export const LoginScreen = () => {
   };
 
   function resetForm() {
-    setLogin("");
     setEmail("");
     setPassword("");
   }
