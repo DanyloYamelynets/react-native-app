@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Alert,
   Dimensions,
+  ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -13,6 +14,8 @@ import {
   View,
 } from "react-native";
 import { LoginBtn, LoginCont, LoginForm, StyledInput } from "./StyledLogin";
+import backgroundImg from "../../assets/images/background.png";
+import { useNavigation } from "@react-navigation/native";
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +23,7 @@ export const LoginScreen = () => {
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const navigation = useNavigation();
 
   const onPressIn = () => {
     setPasswordVisibility(false);
@@ -34,6 +38,7 @@ export const LoginScreen = () => {
     }
     resetForm();
     console.log(`email: ${email}, password: ${password}`);
+    navigation.navigate("Posts");
   };
 
   function resetForm() {
@@ -41,78 +46,122 @@ export const LoginScreen = () => {
     setPassword("");
   }
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height" + 47}
-      style={{ flex: 1, width: "100%" }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView style={{ flex: 1, width: "100%" }}>
-          <View style={styles.wrapper}>
-            <LoginCont>
-              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 30 }}>
-                Увійти
-              </Text>
-              <LoginForm>
-                <StyledInput
-                  value={email}
-                  onChangeText={setEmail}
-                  isFocused={emailFocused}
-                  onFocus={() => setEmailFocused(true)}
-                  onBlur={() => setEmailFocused(false)}
-                  placeholder="Адреса електронної пошти"
-                />
-                <StyledInput
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={passwordVisibility}
-                  isFocused={passwordFocused}
-                  onFocus={() => setPasswordFocused(true)}
-                  onBlur={() => setPasswordFocused(false)}
-                  placeholder="Пароль"
-                />
-                <Pressable
-                  onPressOut={onPressOut}
-                  onPressIn={onPressIn}
-                  style={{
-                    position: "absolute",
-                    top: 82,
-                    right: 16,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "#1B4371",
-                      fontFamily: "Roboto",
-                      fontSize: 16,
-                    }}
-                  >
-                    Показати
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={backgroundImg}
+          resizeMode="cover"
+          style={styles.bgImg}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height" + 47}
+            style={{ flex: 1, width: "100%" }}
+          >
+            <ScrollView style={{ flex: 1, width: "100%" }}>
+              <View style={styles.wrapper}>
+                <LoginCont>
+                  <Text style={{ fontFamily: "Roboto-Medium", fontSize: 30 }}>
+                    Увійти
                   </Text>
-                </Pressable>
-              </LoginForm>
-              <LoginBtn onPress={onLogin}>
-                <Text
-                  style={{ color: "#fff", fontFamily: "Roboto", fontSize: 16 }}
-                >
-                  Увійти
-                </Text>
-              </LoginBtn>
-              <Text
-                style={{ color: "#1B4371", fontFamily: "Roboto", fontSize: 16 }}
-              >
-                Немає акаунту? Зареєструватися
-              </Text>
-            </LoginCont>
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+                  <LoginForm>
+                    <StyledInput
+                      value={email}
+                      onChangeText={setEmail}
+                      isFocused={emailFocused}
+                      onFocus={() => setEmailFocused(true)}
+                      onBlur={() => setEmailFocused(false)}
+                      placeholder="Адреса електронної пошти"
+                    />
+                    <StyledInput
+                      value={password}
+                      onChangeText={setPassword}
+                      secureTextEntry={passwordVisibility}
+                      isFocused={passwordFocused}
+                      onFocus={() => setPasswordFocused(true)}
+                      onBlur={() => setPasswordFocused(false)}
+                      placeholder="Пароль"
+                    />
+                    <Pressable
+                      onPressOut={onPressOut}
+                      onPressIn={onPressIn}
+                      style={{
+                        position: "absolute",
+                        top: Platform.OS === "ios" ? 82 : 80,
+                        right: 16,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#1B4371",
+                          fontFamily: "Roboto",
+                          fontSize: 16,
+                        }}
+                      >
+                        Показати
+                      </Text>
+                    </Pressable>
+                  </LoginForm>
+                  <LoginBtn onPress={onLogin}>
+                    <Text
+                      style={{
+                        color: "#fff",
+                        fontFamily: "Roboto",
+                        fontSize: 16,
+                      }}
+                    >
+                      Увійти
+                    </Text>
+                  </LoginBtn>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text
+                      style={{
+                        color: "#1B4371",
+                        fontFamily: "Roboto",
+                        fontSize: 16,
+                      }}
+                    >
+                      Немає акаунту?{" "}
+                    </Text>
+                    <Pressable
+                      onPress={() => navigation.navigate("Registration")}
+                    >
+                      <Text
+                        style={{
+                          textDecorationLine: "underline",
+                          color: "#1B4371",
+                          fontFamily: "Roboto",
+                          fontSize: 16,
+                        }}
+                      >
+                        Зареєструватися
+                      </Text>
+                    </Pressable>
+                  </View>
+                </LoginCont>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const wrapperHeight = Dimensions.get("screen").height;
-const paddingTop = Platform.OS === "ios" ? 407 : 292;
+const paddingTop = Platform.OS === "ios" ? 407 : 331;
 
 const styles = StyleSheet.create({
   wrapper: { paddingTop, minHeight: wrapperHeight },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bgImg: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
 });

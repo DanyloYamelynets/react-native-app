@@ -1,15 +1,13 @@
-import { StatusBar } from "expo-status-bar";
+import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import {
-  ImageBackground,
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { RegistrationScreen } from "./Screens/RegistrationScreen/RegistrationScreen";
 import { LoginScreen } from "./Screens/LoginScreen/LoginScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { PostsScreen } from "./Screens/PostsScreen/PostsScreen";
+
+const MainStack = createStackNavigator();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -23,32 +21,17 @@ export default function App() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <ImageBackground
-          source={require("./assets/images/background.png")}
-          resizeMode="cover"
-          style={styles.bgImg}
-        >
-          <RegistrationScreen />
-          {/* <LoginScreen /> */}
-        </ImageBackground>
-        <StatusBar style="auto" />
-      </View>
+      <NavigationContainer>
+        <MainStack.Navigator initialRouteName="Login">
+          <MainStack.Screen
+            name="Registration"
+            component={RegistrationScreen}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
+          <MainStack.Screen name="Posts" component={PostsScreen} options={{ headerShown: false }}/>
+        </MainStack.Navigator>
+      </NavigationContainer>
     </TouchableWithoutFeedback>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bgImg: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-});
