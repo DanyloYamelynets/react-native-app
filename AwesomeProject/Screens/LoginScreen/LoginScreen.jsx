@@ -38,7 +38,7 @@ export const LoginScreen = () => {
     }
     resetForm();
     console.log(`email: ${email}, password: ${password}`);
-    navigation.navigate("Posts");
+    navigation.navigate("Home");
   };
 
   function resetForm() {

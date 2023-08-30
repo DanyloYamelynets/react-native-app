@@ -24,6 +24,7 @@ import {
 import { Circle, Path, Svg } from "react-native-svg";
 import backgroundImg from "../../assets/images/background.png";
 import { useNavigation } from "@react-navigation/native";
+import { AddRegisterImg } from "../../assets/svg/AddRegisterImg";
 
 export const RegistrationScreen = () => {
   const [login, setLogin] = useState("");
@@ -48,7 +49,7 @@ export const RegistrationScreen = () => {
     }
     resetForm();
     console.log(`login: ${login}, email: ${email}, password: ${password}`);
-    navigation.navigate("Posts");
+    navigation.navigate("Home");
   };
 
   function resetForm() {
@@ -73,26 +74,7 @@ export const RegistrationScreen = () => {
               <View style={styles.wrapper}>
                 <RegisterCont>
                   <UserPhoto>
-                    <Svg
-                      width={25}
-                      height={25}
-                      viewBox="0 0 25 25"
-                      style={{ position: "absolute", right: -12, bottom: 14 }}
-                    >
-                      <Circle
-                        cx="12.5"
-                        cy="12.5"
-                        r="12"
-                        fill="white"
-                        stroke="#FF6C00"
-                      />
-                      <Path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M13 6H12V12H6V13H12V19H13V13H19V12H13V6Z"
-                        fill="#FF6C00"
-                      />
-                    </Svg>
+                    <AddRegisterImg style={{}} />
                   </UserPhoto>
                   <Text style={{ fontFamily: "Roboto-Medium", fontSize: 30 }}>
                     Реєстрація
