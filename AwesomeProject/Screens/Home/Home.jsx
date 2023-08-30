@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import { TabActions, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Button, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { ProfileScreen } from "../ProfileScreen/ProfileScreen";
@@ -47,61 +47,37 @@ export const Home = () => {
     );
   };
 
+  const renderTabIcon = (routeName, iconName, color, additionalStyles) => {
+    return (
+      <Pressable
+        onPress={() => {
+          navigation.dispatch(TabActions.jumpTo(routeName));
+        }}
+        style={{
+          alignItems: "center",
+          marginBottom: Platform.OS === "android" ? 30 : 0,
+          ...additionalStyles,
+        }}
+      >
+        <Ionicons name={iconName} size={24} color={color} />
+      </Pressable>
+    );
+  };
+
   return (
     <Tabs.Navigator
       initialRouteName="Posts"
-      tabBar={(props) => (
-        <View
-          style={{
-            flexDirection: "row",
-            height: 83,
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 101,
-            paddingBottom: 30,
-            borderTopWidth: 1,
-            borderTopColor: "rgba(0, 0, 0, 0.2)",
-            backgroundColor: "#FFFFFF",
-          }}
-        >
-          <Pressable
-            onPress={() => props.navigation.navigate("Posts")}
-            style={{ alignItems: "center" }}
-          >
-            <Ionicons
-              name={"grid-outline"}
-              size={24}
-              color={"rgba(33, 33, 33, 0.80)"}
-            />
-          </Pressable>
-          <Pressable
-            onPress={() => props.navigation.navigate("Create Posts")}
-            style={{
-              alignItems: "center",
-              width: 70,
-              height: 40,
-
-              paddingVertical: 8,
-              paddingHorizontal: 8,
-
-              backgroundColor: "#FF6C00",
-              borderRadius: 20,
-            }}
-          >
-            <Ionicons name={"add"} size={24} color={"#FFFFFF"} />
-          </Pressable>
-          <Pressable
-            onPress={() => props.navigation.navigate("Profile")}
-            style={{ alignItems: "center" }}
-          >
-            <Ionicons
-              name={"person-outline"}
-              size={24}
-              color={"rgba(33, 33, 33, 0.80)"}
-            />
-          </Pressable>
-        </View>
-      )}
+      screenOptions={{
+        tabBarStyle: {
+          height: 83,
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingHorizontal: 81,
+          borderTopWidth: 1,
+          borderTopColor: "rgba(0, 0, 0, 0.2)",
+          backgroundColor: "#FFFFFF",
+        },
+      }}
     >
       <Tabs.Screen
         name="Posts"
@@ -109,12 +85,15 @@ export const Home = () => {
         options={{
           title: "Публікації",
           headerTitleAlign: "center",
-          headerLeft: null,
+          headerLeft: false,
           headerRight: LogOut,
           headerStyle: {
             borderBottomWidth: 1,
             borderBottomColor: "rgba(0, 0, 0, 0.15)",
           },
+          tabBarIcon: () =>
+            renderTabIcon("Posts", "grid-outline", "rgba(33, 33, 33, 0.80)"),
+          tabBarShowLabel: false,
         }}
       />
       <Tabs.Screen
@@ -128,10 +107,31 @@ export const Home = () => {
             borderBottomWidth: 1,
             borderBottomColor: "rgba(0, 0, 0, 0.15)",
           },
+          tabBarIcon: () =>
+            renderTabIcon("Create Posts", "add", "#FFFFFF", {
+              width: 70,
+              height: 40,
+              paddingVertical: 8,
+              paddingHorizontal: 8,
+              backgroundColor: "#FF6C00",
+              borderRadius: 20,
+            }),
           tabBarStyle: { display: "none" },
         }}
       />
-      <Tabs.Screen name="Profile" component={ProfileScreen} />
+      <Tabs.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: () =>
+            renderTabIcon(
+              "Profile",
+              "person-outline",
+              "rgba(33, 33, 33, 0.80)"
+            ),
+          tabBarShowLabel: false,
+        }}
+      />
     </Tabs.Navigator>
   );
 };
