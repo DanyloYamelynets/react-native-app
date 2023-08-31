@@ -34,17 +34,17 @@ export const LoginScreen = () => {
 
   const onLogin = () => {
     if (!email || !password) {
-      return Alert.alert("Fill in all fields");
+      return Alert.alert("Заповніть всі поля");
     }
     resetForm();
     console.log(`email: ${email}, password: ${password}`);
     navigation.navigate("Home");
   };
 
-  function resetForm() {
+  const resetForm = () => {
     setEmail("");
     setPassword("");
-  }
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

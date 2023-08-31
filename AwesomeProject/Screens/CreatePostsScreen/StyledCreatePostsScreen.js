@@ -36,7 +36,7 @@ export const TitleInput = styled.TextInput`
   padding-bottom: 15px;
   color: #212121;
   border-bottom-width: 1px;
-  border-color: #e8e8e8;
+  border-color: ${(props) => (props.isFocused ? "#FF6C00" : "#e8e8e8")};
 `;
 export const LocationInputCont = styled.View`
   position: relative;
@@ -45,7 +45,7 @@ export const LocationInputCont = styled.View`
   align-content: center;
   color: #212121;
   border-bottom-width: 1px;
-  border-color: #e8e8e8;
+  border-color: ${(props) => (props.isFocused ? "#FF6C00" : "#e8e8e8")};
 `;
 export const LocationInput = styled.TextInput`
   font-size: 16px;
@@ -64,7 +64,6 @@ export const BtnText = styled.Text`
   color: #bdbdbd;
 `;
 export const TrashBtn = styled.Pressable`
-  align-self: flex-end;
   margin-bottom: 34px;
   width: 70px;
   height: 40px;

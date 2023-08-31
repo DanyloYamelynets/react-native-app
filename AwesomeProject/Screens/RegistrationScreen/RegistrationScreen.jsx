@@ -21,7 +21,6 @@ import {
   StyledInput,
   UserPhoto,
 } from "./StyledRegistration";
-import { Circle, Path, Svg } from "react-native-svg";
 import backgroundImg from "../../assets/images/background.png";
 import { useNavigation } from "@react-navigation/native";
 import { AddRegisterImg } from "../../assets/svg/AddRegisterImg";
@@ -45,14 +44,14 @@ export const RegistrationScreen = () => {
 
   const onRegister = () => {
     if (!login || !email || !password) {
-      return Alert.alert("Fill in all fields");
+      return Alert.alert("Заповніть всі поля");
     }
     resetForm();
     console.log(`login: ${login}, email: ${email}, password: ${password}`);
     navigation.navigate("Home");
   };
 
-  function resetForm() {
+  const resetForm = () => {
     setLogin("");
     setEmail("");
     setPassword("");
