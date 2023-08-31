@@ -85,15 +85,14 @@ export const Home = () => {
         options={{
           title: "Публікації",
           headerTitleAlign: "center",
-          headerLeft: false,
           headerRight: LogOut,
+          tabBarShowLabel: false,
           headerStyle: {
             borderBottomWidth: 1,
             borderBottomColor: "rgba(0, 0, 0, 0.15)",
           },
           tabBarIcon: () =>
             renderTabIcon("Posts", "grid-outline", "rgba(33, 33, 33, 0.80)"),
-          tabBarShowLabel: false,
         }}
       />
       <Tabs.Screen
@@ -103,6 +102,7 @@ export const Home = () => {
           title: "Створити публікацію",
           headerTitleAlign: "center",
           headerLeft: goBack,
+          tabBarStyle: { display: "none" },
           headerStyle: {
             borderBottomWidth: 1,
             borderBottomColor: "rgba(0, 0, 0, 0.15)",
@@ -116,20 +116,20 @@ export const Home = () => {
               backgroundColor: "#FF6C00",
               borderRadius: 20,
             }),
-          tabBarStyle: { display: "none" },
         }}
       />
       <Tabs.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerShown: false,
+          tabBarShowLabel: false,
           tabBarIcon: () =>
             renderTabIcon(
               "Profile",
               "person-outline",
               "rgba(33, 33, 33, 0.80)"
             ),
-          tabBarShowLabel: false,
         }}
       />
     </Tabs.Navigator>

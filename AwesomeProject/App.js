@@ -11,7 +11,6 @@ import { Home } from "./Screens/Home/Home";
 const MainStack = createStackNavigator();
 
 export default function App() {
-  // const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     Roboto: require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),

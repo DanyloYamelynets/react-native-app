@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 32,
-
     backgroundColor: "#fff",
   },
   avatarWrapper: {
@@ -33,20 +32,17 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginRight: 8,
-
     backgroundColor: "#f6f6f6",
     borderRadius: 16,
   },
   avatarName: {
     fontFamily: "Roboto-Bold",
     fontSize: 13,
-
     color: "#212121",
   },
   avatarEmail: {
     fontFamily: "Roboto",
     fontSize: 11,
-
     color: "rgba(33, 33, 33, 0.8)",
   },
 });

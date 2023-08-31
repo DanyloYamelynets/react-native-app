@@ -148,7 +148,7 @@ export const LoginScreen = () => {
 };
 
 const wrapperHeight = Dimensions.get("screen").height;
-const paddingTop = Platform.OS === "ios" ? 407 : 331;
+const paddingTop = Platform.OS === "ios" ? 407 : 354;
 
 const styles = StyleSheet.create({
   wrapper: { paddingTop, minHeight: wrapperHeight },
