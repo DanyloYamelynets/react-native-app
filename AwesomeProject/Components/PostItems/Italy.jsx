@@ -1,6 +1,13 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export const Italy = () => {
   return (
@@ -36,7 +43,7 @@ export const Italy = () => {
 
 const styles = StyleSheet.create({
   postCont: {
-    marginBottom: 32,
+    marginBottom: 45,
   },
   postImage: {
     width: 373,
@@ -53,7 +60,7 @@ const styles = StyleSheet.create({
   postItemsCont: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 35,
+    marginBottom: Platform.OS === "android" ? 25 : 0,
   },
   postDesc: {
     flexDirection: "row",

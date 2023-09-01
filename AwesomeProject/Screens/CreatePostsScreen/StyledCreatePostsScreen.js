@@ -10,7 +10,6 @@ export const PostImg = styled.ImageBackground`
   justify-content: center;
   height: 240px;
   max-height: 240px;
-  margin-bottom: 8px;
   background-color: #f6f6f6;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
@@ -24,11 +23,13 @@ export const LoadBtn = styled.Pressable`
   color: #bdbdbd;
   background-color: #ffffff;
   border-radius: 50px;
+  margin-top: 90px;
 `;
 export const LoadText = styled.Text`
   color: #bdbdbd;
   font-size: 16px;
   font-family: Roboto;
+  margin-top: 8px;
 `;
 export const TitleInput = styled.TextInput`
   font-size: 16px;

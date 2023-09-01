@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
   postItemsCont: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 35,
   },
   postDesc: {
     flexDirection: "row",

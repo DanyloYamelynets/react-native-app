@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   ImageBackground,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -26,48 +27,127 @@ import { CameraSvg } from "../../assets/svg/CameraSvg";
 import { LocationSvg } from "../../assets/svg/LocationSvg";
 import { TrashSvg } from "../../assets/svg/TrashSvg";
 import { useNavigation } from "@react-navigation/native";
+import { Camera } from "expo-camera";
+import { Ionicons } from "@expo/vector-icons";
+import * as MediaLibrary from "expo-media-library";
 
 export const CreatePostsScreen = () => {
   const [postImg, setPostImg] = useState(null);
   const [postTitle, setPostTitle] = useState("");
-  const [postlocation, setPostLocation] = useState("");
+  const [postLocation, setPostLocation] = useState("");
   const [titleFocused, setTitleFocused] = useState(false);
   const [locationFocused, setLocationFocused] = useState(false);
+
+  const [hasPermission, setHasPermission] = useState(null);
+  const cameraRef = useRef(null);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+  const [showCamera, setShowCamera] = useState(true);
+
   const navigation = useNavigation();
 
   const resetForm = () => {
-    setPostImg("");
+    setPostImg(null);
     setPostTitle("");
     setPostLocation("");
+    setShowCamera(true);
   };
 
   const onSubmitPost = () => {
-    if (!postImg || !postName || !postlocation)
+    if (!postImg || !postTitle || !postLocation)
       return Alert.alert("Будь ласка, завантажте фото та заповніть поля");
 
-    console.log({ postImg, postName, postlocation });
+    console.log({ postImg, postTitle, postLocation });
 
     navigation.navigate("Posts", {
-      post: { postImg, postName, postlocation },
+      post: { postImg, postTitle, postLocation },
     });
     resetForm();
+  };
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      const { uri } = await cameraRef.current.takePictureAsync();
+      setPostImg(uri);
+      setShowCamera(false);
+    }
+  };
+
+  const openCamera = () => {
+    setPostImg("");
+    setShowCamera(true);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <ImgCont>
-          <PostImg source={postImg}>
-            <LoadBtn
-              style={{
-                backgroundColor: postImg
-                  ? "rgba(255, 255, 255, 0.3)"
-                  : "#ffffff",
-              }}
-            >
-              <CameraSvg fillColor={postImg ? "#ffffff" : "#bdbdbd"} />
-            </LoadBtn>
-          </PostImg>
+          <ImageBackground
+            style={{
+              width: "100%",
+              height: 240,
+              borderRadius: 8,
+              overflow: "hidden",
+            }}
+          >
+            <PostImg source={postImg ? { uri: postImg } : null}>
+              <Camera
+                style={{
+                  width: "100%",
+                  height: 242,
+                  borderRadius: 8,
+                  display: postImg ? "none" : "flex",
+                }}
+                type={cameraType}
+                ref={cameraRef}
+              >
+                <View style={styles.cameraButtonsContainer}>
+                  <LoadBtn
+                    style={{
+                      backgroundColor: postImg
+                        ? "rgba(255, 255, 255, 0.3)"
+                        : "#ffffff",
+                    }}
+                    onPress={takePicture}
+                  >
+                    <CameraSvg fillColor={postImg ? "#ffffff" : "#bdbdbd"} />
+                  </LoadBtn>
+                  <TouchableOpacity
+                    style={styles.flipCameraButton}
+                    onPress={() => {
+                      setCameraType(
+                        cameraType === Camera.Constants.Type.back
+                          ? Camera.Constants.Type.front
+                          : Camera.Constants.Type.back
+                      );
+                    }}
+                  >
+                    <Ionicons name="sync" size={20} color="#ffffff" />
+                  </TouchableOpacity>
+                </View>
+              </Camera>
+              <LoadBtn
+                style={{
+                  backgroundColor: postImg
+                    ? "rgba(255, 255, 255, 0.3)"
+                    : "#ffffff",
+                  display: postImg ? "flex" : "none",
+                  marginTop: 0,
+                }}
+                onPress={openCamera}
+              >
+                <CameraSvg fillColor={postImg ? "#ffffff" : "#bdbdbd"} />
+              </LoadBtn>
+            </PostImg>
+          </ImageBackground>
           <LoadText>{postImg ? "Редагувати фото" : "Завантажте фото"}</LoadText>
         </ImgCont>
         <View
@@ -112,14 +192,14 @@ export const CreatePostsScreen = () => {
           <PostBtn
             style={{
               backgroundColor:
-                !postImg || !postTitle || !postlocation ? "#f6f6f6" : "#ff6c00",
+                !postImg || !postTitle || !postLocation ? "#f6f6f6" : "#ff6c00",
             }}
             onPress={onSubmitPost}
           >
             <BtnText
               style={{
                 color:
-                  !postImg || !postTitle || !postlocation
+                  !postImg || !postTitle || !postLocation
                     ? "#bdbdbd"
                     : "#ffffff",
               }}
@@ -154,5 +234,19 @@ const styles = StyleSheet.create({
     bottom: 16,
     alignSelf: "center",
     backgroundColor: "transparent",
+  },
+  cameraButtonsContainer: {
+    flex: 1,
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  flipCameraButton: {
+    backgroundColor: "#bdbdbd7c",
+    padding: 10,
+    borderRadius: 50,
+    margin: 16,
+    position: "relative",
+    top: 25,
+    left: 165,
   },
 });
