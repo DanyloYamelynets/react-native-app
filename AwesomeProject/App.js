@@ -1,12 +1,21 @@
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import { Button, Keyboard, TouchableWithoutFeedback } from "react-native";
+import {
+  Button,
+  Keyboard,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { RegistrationScreen } from "./Screens/RegistrationScreen/RegistrationScreen";
 import { LoginScreen } from "./Screens/LoginScreen/LoginScreen";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { PostsScreen } from "./Screens/PostsScreen/PostsScreen";
 import { Home } from "./Screens/Home/Home";
+import { CommentsScreen } from "./Screens/CommentsScreen/CommentsScreen";
+import { HeaderBackButton } from "@react-navigation/elements";
+import { Ionicons } from "@expo/vector-icons";
+import { MapScreen } from "./Screens/MapScreen/MapScreen";
 
 const MainStack = createStackNavigator();
 
@@ -39,6 +48,58 @@ export default function App() {
             name="Home"
             component={Home}
             options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="Comments"
+            component={CommentsScreen}
+            options={({ navigation }) => ({
+              title: "Коментарі",
+              headerTitleAlign: "center",
+              headerStyle: {
+                borderBottomWidth: 1,
+                borderBottomColor: "rgba(0, 0, 0, 0.15)",
+              },
+              headerLeft: () => (
+                <View style={{ marginLeft: 16 }}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => navigation.goBack()}
+                  >
+                    <Ionicons
+                      name="arrow-back-sharp"
+                      size={24}
+                      color="rgba(33, 33, 33, 0.80)"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ),
+            })}
+          />
+          <MainStack.Screen
+            name="Map"
+            component={MapScreen}
+            options={({ navigation }) => ({
+              title: "Геолокація",
+              headerTitleAlign: "center",
+              headerStyle: {
+                borderBottomWidth: 1,
+                borderBottomColor: "rgba(0, 0, 0, 0.15)",
+              },
+              headerLeft: () => (
+                <View style={{ marginLeft: 16 }}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => navigation.goBack()}
+                  >
+                    <Ionicons
+                      name="arrow-back-sharp"
+                      size={24}
+                      color="rgba(33, 33, 33, 0.80)"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ),
+            })}
           />
         </MainStack.Navigator>
       </NavigationContainer>

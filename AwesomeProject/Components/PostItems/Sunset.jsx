@@ -1,8 +1,16 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export const Sunset = () => {
+  const navigation = useNavigation();
+
+  const sunsetCoords = {
+    latitude: 46.611487,
+    longitude: 31.080446,
+  };
+
   return (
     <View style={styles.postCont}>
       <Image
@@ -12,7 +20,10 @@ export const Sunset = () => {
       <Text style={styles.postTitle}>Захід на Чорному морі</Text>
       <View style={styles.postItemsCont}>
         <View style={styles.postDesc}>
-          <Pressable style={styles.actionBtn}>
+          <Pressable
+            style={styles.actionBtn}
+            onPress={() => navigation.navigate("Comments")}
+          >
             <Ionicons name="chatbubble-sharp" size={24} color="#FF6C00" />
             <Text style={styles.stats}>3</Text>
           </Pressable>
@@ -23,7 +34,12 @@ export const Sunset = () => {
           </Pressable>
         </View>
 
-        <Pressable style={styles.actionBtn}>
+        <Pressable
+          style={styles.actionBtn}
+          onPress={() =>
+            navigation.navigate("Map", { coordinates: sunsetCoords })
+          }
+        >
           <Feather name="map-pin" size={24} color="#BDBDBD" />
           <Text style={{ ...styles.stats, textDecorationLine: "underline" }}>
             Ukraine

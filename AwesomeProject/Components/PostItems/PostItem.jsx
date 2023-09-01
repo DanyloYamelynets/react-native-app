@@ -3,21 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
-export const Forest = () => {
+export const PostItem = ({ postImg, postTitle, postAddress, postLocation }) => {
   const navigation = useNavigation();
-
-  const forestCoords = {
-    latitude: 48.647443,
-    longitude: 23.91147,
-  };
 
   return (
     <View style={styles.postCont}>
-      <Image
-        source={require("../../assets/images/Forest.jpg")}
-        style={styles.postImage}
-      />
-      <Text style={styles.postTitle}>Ліс</Text>
+      <Image source={{ uri: postImg }} style={styles.postImage} />
+      <Text style={styles.postTitle}>{postTitle}</Text>
       <View style={styles.postItemsCont}>
         <View style={styles.postDesc}>
           <Pressable
@@ -34,15 +26,10 @@ export const Forest = () => {
           </Pressable>
         </View>
 
-        <Pressable
-          style={styles.actionBtn}
-          onPress={() =>
-            navigation.navigate("Map", { coordinates: forestCoords })
-          }
-        >
+        <Pressable style={styles.actionBtn}>
           <Feather name="map-pin" size={24} color="#BDBDBD" />
           <Text style={{ ...styles.stats, textDecorationLine: "underline" }}>
-            Ukraine
+            {postAddress}
           </Text>
         </Pressable>
       </View>

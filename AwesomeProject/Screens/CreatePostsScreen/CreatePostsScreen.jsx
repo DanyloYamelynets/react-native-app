@@ -30,6 +30,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Camera } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 
 export const CreatePostsScreen = () => {
   const [postImg, setPostImg] = useState(null);
@@ -42,6 +43,8 @@ export const CreatePostsScreen = () => {
   const cameraRef = useRef(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [showCamera, setShowCamera] = useState(true);
+
+  const [location, setLocation] = useState(null);
 
   const navigation = useNavigation();
 
@@ -56,10 +59,10 @@ export const CreatePostsScreen = () => {
     if (!postImg || !postTitle || !postLocation)
       return Alert.alert("Будь ласка, завантажте фото та заповніть поля");
 
-    console.log({ postImg, postTitle, postLocation });
+    console.log({ postImg, postTitle, postLocation, location });
 
     navigation.navigate("Posts", {
-      post: { postImg, postTitle, postLocation },
+      post: { postImg, postTitle, postLocation, location },
     });
     resetForm();
   };
@@ -71,7 +74,23 @@ export const CreatePostsScreen = () => {
 
       setHasPermission(status === "granted");
     })();
+
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+      }
+    })();
   }, []);
+
+  const addImageLocation = async () => {
+    const location = await Location.getCurrentPositionAsync({});
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setLocation(coords);
+  };
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -79,6 +98,7 @@ export const CreatePostsScreen = () => {
       setPostImg(uri);
       setShowCamera(false);
     }
+    addImageLocation();
   };
 
   const openCamera = () => {
@@ -163,6 +183,8 @@ export const CreatePostsScreen = () => {
             }}
             placeholderTextColor="#bdbdbd"
             placeholder="Назва..."
+            value={postTitle}
+            onChangeText={setPostTitle}
             isFocused={titleFocused}
             onFocus={() => setTitleFocused(true)}
             onBlur={() => setTitleFocused(false)}
@@ -179,6 +201,8 @@ export const CreatePostsScreen = () => {
             <LocationInput
               placeholderTextColor="#bdbdbd"
               placeholder="Місцевість..."
+              value={postLocation}
+              onChangeText={setPostLocation}
             />
           </LocationInputCont>
         </View>
