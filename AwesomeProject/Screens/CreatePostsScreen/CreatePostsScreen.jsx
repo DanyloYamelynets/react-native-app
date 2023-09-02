@@ -61,9 +61,14 @@ export const CreatePostsScreen = () => {
 
     console.log({ postImg, postTitle, postLocation, location });
 
+    navigation.navigate("Profile", {
+      post: { postImg, postTitle, postLocation, location },
+    });
+
     navigation.navigate("Posts", {
       post: { postImg, postTitle, postLocation, location },
     });
+
     resetForm();
   };
 

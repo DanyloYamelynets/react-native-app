@@ -1,6 +1,6 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -17,6 +17,17 @@ export const PostsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const newPost = route.params?.post || null;
+  const [posts, setPosts] = useState([]);
+
+  const addNewPost = (post) => {
+    setPosts((prevPosts) => [post, ...prevPosts]);
+  };
+
+  useEffect(() => {
+    if (newPost) {
+      addNewPost(newPost);
+    }
+  }, [newPost]);
 
   return (
     <ScrollView>
@@ -28,10 +39,10 @@ export const PostsScreen = () => {
             <Text style={styles.avatarEmail}>email@example.com</Text>
           </View>
         </View>
-        {newPost && (
-          <>
+        {posts.map((post, index) => (
+          <View key={index}>
             <Image
-              source={{ uri: newPost.postImg }}
+              source={{ uri: post.postImg }}
               style={{
                 width: "100%",
                 height: 240,
@@ -39,7 +50,7 @@ export const PostsScreen = () => {
                 overflow: "hidden",
               }}
             />
-            <Text style={styles.postTitle}>{newPost.postTitle}</Text>
+            <Text style={styles.postTitle}>{post.postTitle}</Text>
             <View style={styles.postItemsCont}>
               <Pressable
                 style={styles.actionBtn}
@@ -51,19 +62,19 @@ export const PostsScreen = () => {
               <Pressable
                 style={styles.actionBtn}
                 onPress={() =>
-                  navigation.navigate("Map", { coordinates: newPost.location })
+                  navigation.navigate("Map", { coordinates: post.location })
                 }
               >
                 <Feather name="map-pin" size={24} color="#BDBDBD" />
                 <Text
                   style={{ ...styles.stats, textDecorationLine: "underline" }}
                 >
-                  {newPost.postLocation}
+                  {post.postLocation}
                 </Text>
               </Pressable>
             </View>
-          </>
-        )}
+          </View>
+        ))}
         <View>
           <Forest showLikeButton={false} isPostsScreen={true} />
           <Sunset showLikeButton={false} isPostsScreen={true} />
