@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
-export const Forest = () => {
+export const Forest = ({ showLikeButton = true, isPostsScreen = true }) => {
   const navigation = useNavigation();
 
   const forestCoords = {
@@ -24,14 +24,20 @@ export const Forest = () => {
             style={styles.actionBtn}
             onPress={() => navigation.navigate("Comments")}
           >
-            <Ionicons name="chatbubble-sharp" size={24} color="#FF6C00" />
-            <Text style={styles.stats}>8</Text>
+            <Ionicons
+              name={isPostsScreen ? "chatbubble-outline" : "chatbubble-sharp"}
+              size={24}
+              color={isPostsScreen ? "#8b8b8b" : "#FF6C00"}
+            />
+            <Text style={styles.stats}>{isPostsScreen ? "0" : "8"}</Text>
           </Pressable>
 
-          <Pressable style={{ ...styles.actionBtn, marginLeft: 24 }}>
-            <Feather name="thumbs-up" size={24} color="#FF6C00" />
-            <Text style={styles.stats}>153</Text>
-          </Pressable>
+          {showLikeButton && (
+            <Pressable style={{ ...styles.actionBtn, marginLeft: 24 }}>
+              <Feather name="thumbs-up" size={24} color="#FF6C00" />
+              <Text style={styles.stats}>153</Text>
+            </Pressable>
+          )}
         </View>
 
         <Pressable
@@ -52,10 +58,11 @@ export const Forest = () => {
 
 const styles = StyleSheet.create({
   postCont: {
+    flex: 1,
     marginBottom: 32,
   },
   postImage: {
-    width: 373,
+    width: "100%",
     height: 240,
     marginBottom: 8,
     borderRadius: 8,

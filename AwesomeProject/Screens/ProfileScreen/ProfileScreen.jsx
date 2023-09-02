@@ -48,10 +48,15 @@ export const ProfileScreen = () => {
         </LogOutBtn>
         <UserName>Natali Romanova</UserName>
         <ScrollView>
-          <View>
-            <Forest />
-            <Sunset />
-            <Italy />
+          <View
+            style={{
+              width: 414,
+              paddingHorizontal: 16,
+            }}
+          >
+            <Forest isPostsScreen={false} />
+            <Sunset isPostsScreen={false} />
+            <Italy isPostsScreen={false} />
           </View>
         </ScrollView>
       </ProfileCont>

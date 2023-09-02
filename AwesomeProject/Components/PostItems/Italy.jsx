@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 
-export const Italy = () => {
+export const Italy = ({ showLikeButton = true, isPostsScreen = true }) => {
   const navigation = useNavigation();
 
   const italyCoords = {
@@ -31,14 +31,20 @@ export const Italy = () => {
             style={styles.actionBtn}
             onPress={() => navigation.navigate("Comments")}
           >
-            <Ionicons name="chatbubble-sharp" size={24} color="#FF6C00" />
-            <Text style={styles.stats}>50</Text>
+            <Ionicons
+              name={isPostsScreen ? "chatbubble-outline" : "chatbubble-sharp"}
+              size={24}
+              color={isPostsScreen ? "#8b8b8b" : "#FF6C00"}
+            />
+            <Text style={styles.stats}>{isPostsScreen ? "0" : "50"}</Text>
           </Pressable>
 
-          <Pressable style={{ ...styles.actionBtn, marginLeft: 24 }}>
-            <Feather name="thumbs-up" size={24} color="#FF6C00" />
-            <Text style={styles.stats}>200</Text>
-          </Pressable>
+          {showLikeButton && (
+            <Pressable style={{ ...styles.actionBtn, marginLeft: 24 }}>
+              <Feather name="thumbs-up" size={24} color="#FF6C00" />
+              <Text style={styles.stats}>200</Text>
+            </Pressable>
+          )}
         </View>
 
         <Pressable
@@ -59,10 +65,11 @@ export const Italy = () => {
 
 const styles = StyleSheet.create({
   postCont: {
+    flex: 1,
     marginBottom: 45,
   },
   postImage: {
-    width: 373,
+    width: "100%",
     height: 240,
     marginBottom: 8,
     borderRadius: 8,

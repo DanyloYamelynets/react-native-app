@@ -1,7 +1,17 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Forest } from "../../Components/PostItems/Forest";
+import { Sunset } from "../../Components/PostItems/Sunset";
+import { Italy } from "../../Components/PostItems/Italy";
 
 export const PostsScreen = () => {
   const navigation = useNavigation();
@@ -9,52 +19,58 @@ export const PostsScreen = () => {
   const newPost = route.params?.post || null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.avatarWrapper}>
-        <Image style={styles.avatarImg} />
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.avatarWrapper}>
+          <Image style={styles.avatarImg} />
+          <View>
+            <Text style={styles.avatarName}>Natali Romanova</Text>
+            <Text style={styles.avatarEmail}>email@example.com</Text>
+          </View>
+        </View>
+        {newPost && (
+          <>
+            <Image
+              source={{ uri: newPost.postImg }}
+              style={{
+                width: "100%",
+                height: 240,
+                borderRadius: 8,
+                overflow: "hidden",
+              }}
+            />
+            <Text style={styles.postTitle}>{newPost.postTitle}</Text>
+            <View style={styles.postItemsCont}>
+              <Pressable
+                style={styles.actionBtn}
+                onPress={() => navigation.navigate("Comments")}
+              >
+                <Ionicons name="chatbubble-outline" size={24} color="#8b8b8b" />
+                <Text style={styles.stats}>0</Text>
+              </Pressable>
+              <Pressable
+                style={styles.actionBtn}
+                onPress={() =>
+                  navigation.navigate("Map", { coordinates: newPost.location })
+                }
+              >
+                <Feather name="map-pin" size={24} color="#BDBDBD" />
+                <Text
+                  style={{ ...styles.stats, textDecorationLine: "underline" }}
+                >
+                  {newPost.postLocation}
+                </Text>
+              </Pressable>
+            </View>
+          </>
+        )}
         <View>
-          <Text style={styles.avatarName}>Natali Romanova</Text>
-          <Text style={styles.avatarEmail}>email@example.com</Text>
+          <Forest showLikeButton={false} isPostsScreen={true} />
+          <Sunset showLikeButton={false} isPostsScreen={true} />
+          <Italy showLikeButton={false} isPostsScreen={true} />
         </View>
       </View>
-      {newPost && (
-        <>
-          <Image
-            source={{ uri: newPost.postImg }}
-            style={{
-              width: "100%",
-              height: 240,
-              borderRadius: 8,
-              overflow: "hidden",
-              marginTop: 32,
-            }}
-          />
-          <Text style={styles.postTitle}>{newPost.postTitle}</Text>
-          <View style={styles.postItemsCont}>
-            <Pressable
-              style={styles.actionBtn}
-              onPress={() => navigation.navigate("Comments")}
-            >
-              <Ionicons name="chatbubble-outline" size={24} color="#8b8b8b" />
-              <Text style={styles.stats}>0</Text>
-            </Pressable>
-            <Pressable
-              style={styles.actionBtn}
-              onPress={() =>
-                navigation.navigate("Map", { coordinates: newPost.location })
-              }
-            >
-              <Feather name="map-pin" size={24} color="#BDBDBD" />
-              <Text
-                style={{ ...styles.stats, textDecorationLine: "underline" }}
-              >
-                {newPost.postLocation}
-              </Text>
-            </Pressable>
-          </View>
-        </>
-      )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -68,6 +84,7 @@ const styles = StyleSheet.create({
   avatarWrapper: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 32,
   },
   avatarImg: {
     width: 60,
@@ -89,6 +106,7 @@ const styles = StyleSheet.create({
   postItemsCont: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 33,
   },
   actionBtn: {
     flexDirection: "row",
