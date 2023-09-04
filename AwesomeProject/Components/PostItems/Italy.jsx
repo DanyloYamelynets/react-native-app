@@ -29,7 +29,11 @@ export const Italy = ({ showLikeButton = true, isPostsScreen = true }) => {
         <View style={styles.postDesc}>
           <Pressable
             style={styles.actionBtn}
-            onPress={() => navigation.navigate("Comments")}
+            onPress={() =>
+              navigation.navigate("Comments", {
+                postImg: require("../../assets/images/Italy.jpg"),
+              })
+            }
           >
             <Ionicons
               name={isPostsScreen ? "chatbubble-outline" : "chatbubble-sharp"}

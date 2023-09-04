@@ -29,6 +29,7 @@ export const ProfileScreen = () => {
   const route = useRoute();
   const newPost = route.params?.post || null;
   const [posts, setPosts] = useState([]);
+  //  const [commentCount, setCommentCount] = useState(0);
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
@@ -93,14 +94,23 @@ export const ProfileScreen = () => {
                 <View style={styles.postItemsCont}>
                   <Pressable
                     style={styles.actionBtn}
-                    onPress={() => navigation.navigate("Comments")}
+                    onPress={() =>
+                      navigation.navigate("Comments", {
+                        postImg: post.postImg,
+                        updateCommentCount: (newCommentCount) => {
+                          const updatedPosts = [...posts];
+                          updatedPosts[index].commentCount = newCommentCount;
+                          setPosts(updatedPosts);
+                        },
+                      })
+                    }
                   >
                     <Ionicons
                       name="chatbubble-outline"
                       size={24}
                       color="#8b8b8b"
                     />
-                    <Text style={styles.stats}>0</Text>
+                    <Text style={styles.stats}>{post.commentCount || 0}</Text>
                   </Pressable>
                   <Pressable
                     style={styles.actionBtn}

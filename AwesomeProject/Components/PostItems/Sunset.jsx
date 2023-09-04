@@ -22,7 +22,11 @@ export const Sunset = ({ showLikeButton = true, isPostsScreen = true }) => {
         <View style={styles.postDesc}>
           <Pressable
             style={styles.actionBtn}
-            onPress={() => navigation.navigate("Comments")}
+            onPress={() =>
+              navigation.navigate("Comments", {
+                postImg: require("../../assets/images/Sunset.jpg"),
+              })
+            }
           >
             <Ionicons
               name={isPostsScreen ? "chatbubble-outline" : "chatbubble-sharp"}
