@@ -16,7 +16,7 @@ import {
 import CommentItem from "../../Components/CommentItem/CommentItem";
 
 export const CommentsScreen = ({ route }) => {
-  const { postImg, commentCount, updateCommentCount } = route.params;
+  const { postImg, updateCommentCount } = route.params;
   const [commentText, setCommentText] = useState("");
   const [comments, setComment] = useState([
     // {

@@ -18,7 +18,6 @@ export const PostsScreen = () => {
   const route = useRoute();
   const newPost = route.params?.post || null;
   const [posts, setPosts] = useState([]);
-  // const [commentCount, setCommentCount] = useState(0);
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
@@ -30,11 +29,11 @@ export const PostsScreen = () => {
     }
   }, [newPost]);
 
-  // useEffect(() => {
-  //   if (route.params && route.params.updateCommentCount) {
-  //     setCommentCount(route.params.updateCommentCount);
-  //   }
-  // }, [route.params]);
+  const updateCommentCount = (index, newCommentCount) => {
+    const updatedPosts = [...posts];
+    updatedPosts[index].commentCount = newCommentCount;
+    setPosts(updatedPosts);
+  };
 
   return (
     <ScrollView>
@@ -65,14 +64,20 @@ export const PostsScreen = () => {
                   navigation.navigate("Comments", {
                     postImg: post.postImg,
                     updateCommentCount: (newCommentCount) => {
-                      const updatedPosts = [...posts];
-                      updatedPosts[index].commentCount = newCommentCount;
-                      setPosts(updatedPosts);
+                      updateCommentCount(index, newCommentCount);
                     },
                   })
                 }
               >
-                <Ionicons name="chatbubble-outline" size={24} color="#8b8b8b" />
+                <Ionicons
+                  name={
+                    post.commentCount
+                      ? "chatbubble-sharp"
+                      : "chatbubble-outline"
+                  }
+                  size={24}
+                  color={post.commentCount ? "#FF6C00" : "#8b8b8b"}
+                />
                 <Text style={styles.stats}>{post.commentCount || 0}</Text>
               </Pressable>
               <Pressable

@@ -29,17 +29,21 @@ export const ProfileScreen = () => {
   const route = useRoute();
   const newPost = route.params?.post || null;
   const [posts, setPosts] = useState([]);
-  //  const [commentCount, setCommentCount] = useState(0);
+  const [userName, setUserName] = useState(null);
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
   };
 
-  useEffect(() => {
-    if (newPost) {
-      addNewPost(newPost);
-    }
-  }, [newPost]);
+    useEffect(() => {
+      if (newPost) {
+        addNewPost(newPost);
+      }
+
+      if (route.params?.login) {
+        setUserName(route.params.login);
+      }
+    }, [newPost, route.params?.login]);
 
   return (
     <ImageBackground
@@ -71,7 +75,7 @@ export const ProfileScreen = () => {
             }}
           />
         </LogOutBtn>
-        <UserName>Natali Romanova</UserName>
+        <UserName>{userName}</UserName>
         <ScrollView>
           <View
             style={{
@@ -106,9 +110,13 @@ export const ProfileScreen = () => {
                     }
                   >
                     <Ionicons
-                      name="chatbubble-outline"
+                      name={
+                        post.commentCount
+                          ? "chatbubble-sharp"
+                          : "chatbubble-outline"
+                      }
                       size={24}
-                      color="#8b8b8b"
+                      color={post.commentCount ? "#FF6C00" : "#8b8b8b"}
                     />
                     <Text style={styles.stats}>{post.commentCount || 0}</Text>
                   </Pressable>
