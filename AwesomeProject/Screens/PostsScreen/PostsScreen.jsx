@@ -12,12 +12,22 @@ import {
 import { Forest } from "../../Components/PostItems/Forest";
 import { Sunset } from "../../Components/PostItems/Sunset";
 import { Italy } from "../../Components/PostItems/Italy";
+import { useSelector } from "react-redux";
+import {
+  selectAvatar,
+  selectEmail,
+  selectLogin,
+} from "../../redux/auth/authSelectors";
 
 export const PostsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const newPost = route.params?.post || null;
   const [posts, setPosts] = useState([]);
+
+  const login = useSelector(selectLogin);
+  const email = useSelector(selectEmail);
+  const avatar = useSelector(selectAvatar);
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
@@ -39,10 +49,10 @@ export const PostsScreen = () => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.avatarWrapper}>
-          <Image style={styles.avatarImg} />
+          <Image style={styles.avatarImg} source={{ uri: avatar }} />
           <View>
-            <Text style={styles.avatarName}>Natali Romanova</Text>
-            <Text style={styles.avatarEmail}>email@example.com</Text>
+            <Text style={styles.avatarName}>{login}</Text>
+            <Text style={styles.avatarEmail}>{email}</Text>
           </View>
         </View>
         {posts.map((post, index) => (
@@ -159,3 +169,15 @@ const styles = StyleSheet.create({
     color: "#212121",
   },
 });
+
+// const password = useSelector(selectPassword);
+// const email = useSelector(selectEmail);
+
+// const user = await dispatch(logInUser({ email, password }));
+
+// if (user === null || user === undefined) {
+//   Alert.alert(`Такого користувача не знайдено`);
+//   return;
+// }
+
+// dispatch(logIn({ email, password }));

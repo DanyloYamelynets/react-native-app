@@ -31,6 +31,7 @@ import { Camera } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+import { savePostToFirebase } from "../../redux/posts/postsOperations";
 
 export const CreatePostsScreen = () => {
   const [postImg, setPostImg] = useState(null);
@@ -61,6 +62,13 @@ export const CreatePostsScreen = () => {
 
     console.log({ postImg, postTitle, postLocation, location });
 
+    // const newPost = {
+    //   postImg,
+    //   postTitle,
+    //   postLocation,
+    //   location,
+    // };
+
     navigation.navigate("Profile", {
       post: { postImg, postTitle, postLocation, location },
     });
@@ -68,6 +76,8 @@ export const CreatePostsScreen = () => {
     navigation.navigate("Posts", {
       post: { postImg, postTitle, postLocation, location },
     });
+
+    // savePostToFirebase(newPost);
 
     resetForm();
   };

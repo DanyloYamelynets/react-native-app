@@ -7,16 +7,24 @@ import { CreatePostsScreen } from "../CreatePostsScreen/CreatePostsScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { PostsScreen } from "../PostsScreen/PostsScreen";
 import { LogOutSvg } from "../../assets/svg/LogOutSvg";
+import { useDispatch } from "react-redux";
+import { signOut } from "../../redux/auth/authSlice";
 
 const Tabs = createBottomTabNavigator();
 
 export const Home = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const LogOut = () => {
+    const handleLogOut = () => {
+      dispatch(signOut());
+      navigation.navigate("Login");
+    };
+
     return (
       <LogOutSvg
-        onPress={() => navigation.navigate("Login")}
+        onPress={handleLogOut}
         title="Log Out"
         color="#fff"
         style={{

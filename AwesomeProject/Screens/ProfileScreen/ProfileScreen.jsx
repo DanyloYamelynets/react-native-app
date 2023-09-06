@@ -23,27 +23,34 @@ import { Forest } from "../../Components/PostItems/Forest";
 import { Sunset } from "../../Components/PostItems/Sunset";
 import { Italy } from "../../Components/PostItems/Italy";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAvatar, selectLogin } from "../../redux/auth/authSelectors";
+import { signOut } from "../../redux/auth/authSlice";
 
 export const ProfileScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const newPost = route.params?.post || null;
   const [posts, setPosts] = useState([]);
-  const [userName, setUserName] = useState(null);
+  const dispatch = useDispatch();
+
+  const login = useSelector(selectLogin);
+  const avatar = useSelector(selectAvatar);
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
   };
 
-    useEffect(() => {
-      if (newPost) {
-        addNewPost(newPost);
-      }
+  useEffect(() => {
+    if (newPost) {
+      addNewPost(newPost);
+    }
+  }, [newPost]);
 
-      if (route.params?.login) {
-        setUserName(route.params.login);
-      }
-    }, [newPost, route.params?.login]);
+  const handleLogOut = () => {
+    dispatch(signOut());
+    navigation.navigate("Login");
+  };
 
   return (
     <ImageBackground
@@ -57,13 +64,21 @@ export const ProfileScreen = () => {
     >
       <ProfileCont>
         <UserAvatar>
-          <AddRegisterImg
-            style={{ position: "absolute", bottom: 8, right: -18 }}
-          />
+          <Image style={styles.avatar} source={{ uri: avatar }} />
+          <Pressable
+            style={avatar ? styles.btnAddAvatarLoad : styles.btnAddAvatar}
+            // onPress={onLoadAvatar}
+          >
+            <AddRegisterImg
+              style={
+                avatar ? styles.btnAddAvatarSvgLoad : styles.btnAddAvatarSvg
+              }
+            />
+          </Pressable>
         </UserAvatar>
         <LogOutBtn>
           <LogOutSvg
-            onPress={() => navigation.navigate("Login")}
+            onPress={handleLogOut}
             title="Log Out"
             color="#fff"
             style={{
@@ -75,7 +90,7 @@ export const ProfileScreen = () => {
             }}
           />
         </LogOutBtn>
-        <UserName>{userName}</UserName>
+        <UserName>{login}</UserName>
         <ScrollView>
           <View
             style={{
@@ -200,5 +215,36 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Medium",
     fontSize: 16,
     color: "#212121",
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+  },
+  btnAddAvatar: {
+    color: "#ff6c00",
+    backgroundColor: "#ffffff",
+    borderRadius: 50,
+  },
+  btnAddAvatarLoad: {
+    position: "absolute",
+    bottom: 8,
+    right: 19,
+    alignItems: "center",
+    alignContent: "center",
+    color: "#ff6c00",
+    backgroundColor: "#ffffff",
+    borderRadius: 50,
+    transform: [{ rotate: "45deg" }],
+  },
+  btnAddAvatarSvg: {
+    fill: "#ff6c00",
+    stroke: "#ff6c00",
+    backgroundColor: "#ffffff",
+  },
+  btnAddAvatarSvgLoad: {
+    fill: "#bdbdbd",
+    stroke: "#e8e8e8",
+    backgroundColor: "#ffffff",
   },
 });

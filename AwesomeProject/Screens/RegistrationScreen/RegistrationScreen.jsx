@@ -26,10 +26,9 @@ import backgroundImg from "../../assets/images/background.png";
 import { AddRegisterImg } from "../../assets/svg/AddRegisterImg";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { authStateChange } from "../../redux/auth/authSlice";
-import { authSignUpUser } from "../../redux/auth/authOperations";
+import { registerUser } from "../../redux/auth/authSlice";
+import { signInUser } from "../../redux/auth/authOperations";
 import * as ImagePicker from "expo-image-picker";
-import { getStorage } from "firebase/storage";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "firebase/storage";
 
@@ -59,26 +58,20 @@ export const RegistrationScreen = () => {
       return Alert.alert("Заповніть всі поля");
     }
 
-    const photo = avatar
-      ? await uploadImageToServer(avatar, "avatars")
-      : "https://firebasestorage.googleapis.com/v0/b/first-react-native-proje-98226.appspot.com/o/userAvatars%2FDefault_pfp.svg.png?alt=media&token=7cafd3a4-f9a4-40f2-9115-9067f5a15f57";
+    const user = await dispatch(signInUser({ login, email, password, avatar }));
 
-    dispatch(authSignUpUser({ photo, login, email, password })).then((data) => {
-      if (data === undefined || !data.uid) {
-        console.log(
-          `login: ${login}, email: ${email}, password: ${password}, photO: ${avatar}`
-        );
-        Alert.alert(`Реєстрацію не виконано!`);
-        return;
-      }
-      dispatch(authStateChange({ stateChange: true }));
-      console.log(data);
-    });
+    if (user === null || user === undefined) {
+      Alert.alert(`Реєстрацію не виконано!`);
+      return;
+    }
 
-    // resetForm();
-    // console.log(
-    //   `login: ${login}, email: ${email}, password: ${password}, photO: ${avatar}`
-    // );
+    resetForm();
+    console.log(
+      `login: ${login}, email: ${email}, password: ${password}, photO: ${avatar}`
+    );
+
+    dispatch(registerUser({ login, email, avatar, password }));
+
     navigation.navigate("Home");
   };
 

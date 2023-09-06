@@ -16,6 +16,15 @@ import {
 import { LoginBtn, LoginCont, LoginForm, StyledInput } from "./StyledLogin";
 import backgroundImg from "../../assets/images/background.png";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { logInUser } from "../../redux/auth/authOperations";
+import { logIn } from "../../redux/auth/authSlice";
+import {
+  selectAvatar,
+  selectEmail,
+  selectLogin,
+  selectPassword,
+} from "../../redux/auth/authSelectors";
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -24,6 +33,10 @@ export const LoginScreen = () => {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  // const password = useSelector(selectPassword);
+  // const email = useSelector(selectEmail);
 
   const onPressIn = () => {
     setPasswordVisibility(false);
@@ -32,12 +45,14 @@ export const LoginScreen = () => {
     setPasswordVisibility(true);
   };
 
-  const onLogin = () => {
+  const onLogin = async () => {
     if (!email || !password) {
       return Alert.alert("Заповніть всі поля");
     }
+
     resetForm();
     console.log(`email: ${email}, password: ${password}`);
+
     navigation.navigate("Home");
   };
 
