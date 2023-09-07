@@ -31,12 +31,22 @@ import { signInUser } from "../../redux/auth/authOperations";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "firebase/storage";
+import {
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../../redux/firebase/config";
+
+const initialState = {
+  login: "",
+  email: "",
+  password: "",
+};
 
 export const RegistrationScreen = () => {
-  const [login, setLogin] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
   const [avatar, setAvatar] = useState(null);
+  const [state, setState] = useState(initialState);
 
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [loginFocused, setLoginFocused] = useState(false);
@@ -46,6 +56,18 @@ export const RegistrationScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const onChangeLogin = (text) => {
+    setState((prevState) => ({ ...prevState, login: text.trim() }));
+  };
+
+  const onChangeEmail = (text) => {
+    setState((prevState) => ({ ...prevState, email: text.trim() }));
+  };
+
+  const onChangePassword = (text) => {
+    setState((prevState) => ({ ...prevState, password: text.trim() }));
+  };
+
   const onPressIn = () => {
     setPasswordVisibility(false);
   };
@@ -53,26 +75,53 @@ export const RegistrationScreen = () => {
     setPasswordVisibility(true);
   };
 
+  const updateUserProfile = async (user) => {
+    if (user) {
+      try {
+        await updateProfile(user, {
+          displayName: state.login,
+          photoURL: avatar,
+        });
+      } catch (error) {
+        throw error;
+      }
+    }
+  };
+
   const onRegister = async () => {
-    if (!login || !email || !password || !avatar) {
+    if (!state.login || !state.email || !state.password || !avatar) {
       return Alert.alert("Заповніть всі поля");
     }
 
-    const user = await dispatch(signInUser({ login, email, password, avatar }));
-
-    if (user === null || user === undefined) {
-      Alert.alert(`Реєстрацію не виконано!`);
-      return;
-    }
-
-    resetForm();
-    console.log(
-      `login: ${login}, email: ${email}, password: ${password}, photO: ${avatar}`
-    );
-
-    dispatch(registerUser({ login, email, avatar, password }));
-
-    navigation.navigate("Home");
+    fetchSignInMethodsForEmail(auth, state.email)
+      .then((signInMetods) => {
+        if (signInMetods.length > 0) {
+          Alert.alert("Щось пішло не так...");
+        } else {
+          createUserWithEmailAndPassword(auth, state.email, state.password)
+            .then((userInfo) => {
+              const user = userInfo.user;
+              console.log(user);
+              updateUserProfile(user);
+              dispatch(
+                registerUser({
+                  login: state.login,
+                  email: state.email,
+                  password: state.password,
+                  avatar: avatar,
+                })
+              );
+              navigation.navigate("Home");
+              setState(initialState);
+            })
+            .catch((error) => {
+              Alert.alert(error.message);
+            });
+        }
+      })
+      .catch((error) => {
+        Alert.alert(error.message);
+      });
   };
 
   const onLoadAvatar = async () => {
@@ -114,13 +163,6 @@ export const RegistrationScreen = () => {
     }
   };
 
-  const resetForm = () => {
-    setLogin(null);
-    setEmail(null);
-    setPassword(null);
-    setAvatar(null);
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -158,24 +200,24 @@ export const RegistrationScreen = () => {
                   </Text>
                   <RegisterForm>
                     <StyledInput
-                      value={login}
-                      onChangeText={setLogin}
+                      value={state.login}
+                      onChangeText={onChangeLogin}
                       isFocused={loginFocused}
                       onFocus={() => setLoginFocused(true)}
                       onBlur={() => setLoginFocused(false)}
                       placeholder="Логін"
                     />
                     <StyledInput
-                      value={email}
-                      onChangeText={setEmail}
+                      value={state.email}
+                      onChangeText={onChangeEmail}
                       isFocused={emailFocused}
                       onFocus={() => setEmailFocused(true)}
                       onBlur={() => setEmailFocused(false)}
                       placeholder="Адреса електронної пошти"
                     />
                     <StyledInput
-                      value={password}
-                      onChangeText={setPassword}
+                      value={state.password}
+                      onChangeText={onChangePassword}
                       secureTextEntry={passwordVisibility}
                       isFocused={passwordFocused}
                       onFocus={() => setPasswordFocused(true)}

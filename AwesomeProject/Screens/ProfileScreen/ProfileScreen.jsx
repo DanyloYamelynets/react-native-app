@@ -26,6 +26,7 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAvatar, selectLogin } from "../../redux/auth/authSelectors";
 import { signOut } from "../../redux/auth/authSlice";
+import { auth } from "../../redux/firebase/config";
 
 export const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -34,8 +35,8 @@ export const ProfileScreen = () => {
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
 
-  const login = useSelector(selectLogin);
-  const avatar = useSelector(selectAvatar);
+  const userName = auth.currentUser?.displayName;
+  const userAvatar = auth.currentUser?.photoURL;
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
@@ -64,14 +65,14 @@ export const ProfileScreen = () => {
     >
       <ProfileCont>
         <UserAvatar>
-          <Image style={styles.avatar} source={{ uri: avatar }} />
+          <Image style={styles.avatar} source={{ uri: userAvatar }} />
           <Pressable
-            style={avatar ? styles.btnAddAvatarLoad : styles.btnAddAvatar}
+            style={userAvatar ? styles.btnAddAvatarLoad : styles.btnAddAvatar}
             // onPress={onLoadAvatar}
           >
             <AddRegisterImg
               style={
-                avatar ? styles.btnAddAvatarSvgLoad : styles.btnAddAvatarSvg
+                userAvatar ? styles.btnAddAvatarSvgLoad : styles.btnAddAvatarSvg
               }
             />
           </Pressable>
@@ -90,7 +91,7 @@ export const ProfileScreen = () => {
             }}
           />
         </LogOutBtn>
-        <UserName>{login}</UserName>
+        <UserName>{userName}</UserName>
         <ScrollView>
           <View
             style={{

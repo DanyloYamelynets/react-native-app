@@ -17,26 +17,32 @@ import { LoginBtn, LoginCont, LoginForm, StyledInput } from "./StyledLogin";
 import backgroundImg from "../../assets/images/background.png";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { logInUser } from "../../redux/auth/authOperations";
 import { logIn } from "../../redux/auth/authSlice";
-import {
-  selectAvatar,
-  selectEmail,
-  selectLogin,
-  selectPassword,
-} from "../../redux/auth/authSelectors";
+import { selectIsLoggedIn } from "../../redux/auth/authSelectors";
+import { useEffect } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../redux/firebase/config";
+
+const initialState = {
+  email: "",
+  password: "",
+};
 
 export const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, setState] = useState(initialState);
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
-  // const password = useSelector(selectPassword);
-  // const email = useSelector(selectEmail);
+  const onChangeEmail = (text) => {
+    setState((prevState) => ({ ...prevState, email: text.trim() }));
+  };
+  const onChangePassword = (text) => {
+    setState((prevState) => ({ ...prevState, password: text.trim() }));
+  };
 
   const onPressIn = () => {
     setPasswordVisibility(false);
@@ -45,21 +51,39 @@ export const LoginScreen = () => {
     setPasswordVisibility(true);
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigation.navigate("Home");
+    }
+  }, [isLoggedIn, navigation]);
+
   const onLogin = async () => {
-    if (!email || !password) {
+    if (!state.email || !state.password) {
       return Alert.alert("Заповніть всі поля");
     }
 
-    resetForm();
-    console.log(`email: ${email}, password: ${password}`);
+    try {
+      const credentials = await signInWithEmailAndPassword(
+        auth,
+        state.email,
+        state.password
+      );
 
-    navigation.navigate("Home");
+      dispatch(
+        logIn({
+          email: state.email,
+          password: state.password,
+        })
+      );
+      navigation.navigate("Home");
+      setState(initialState);
+      return credentials.user;
+    } catch (error) {
+      Alert.alert(error.message);
+      console.log(error.message);
+    }
   };
 
-  const resetForm = () => {
-    setEmail("");
-    setPassword("");
-  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -80,16 +104,16 @@ export const LoginScreen = () => {
                   </Text>
                   <LoginForm>
                     <StyledInput
-                      value={email}
-                      onChangeText={setEmail}
+                      value={state.email}
+                      onChangeText={onChangeEmail}
                       isFocused={emailFocused}
                       onFocus={() => setEmailFocused(true)}
                       onBlur={() => setEmailFocused(false)}
                       placeholder="Адреса електронної пошти"
                     />
                     <StyledInput
-                      value={password}
-                      onChangeText={setPassword}
+                      value={state.password}
+                      onChangeText={onChangePassword}
                       secureTextEntry={passwordVisibility}
                       isFocused={passwordFocused}
                       onFocus={() => setPasswordFocused(true)}

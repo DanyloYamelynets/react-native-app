@@ -13,11 +13,8 @@ import { Forest } from "../../Components/PostItems/Forest";
 import { Sunset } from "../../Components/PostItems/Sunset";
 import { Italy } from "../../Components/PostItems/Italy";
 import { useSelector } from "react-redux";
-import {
-  selectAvatar,
-  selectEmail,
-  selectLogin,
-} from "../../redux/auth/authSelectors";
+import { selectEmail } from "../../redux/auth/authSelectors";
+import { auth } from "../../redux/firebase/config";
 
 export const PostsScreen = () => {
   const navigation = useNavigation();
@@ -25,9 +22,9 @@ export const PostsScreen = () => {
   const newPost = route.params?.post || null;
   const [posts, setPosts] = useState([]);
 
-  const login = useSelector(selectLogin);
   const email = useSelector(selectEmail);
-  const avatar = useSelector(selectAvatar);
+  const userName = auth.currentUser?.displayName;
+  const userAvatar = auth.currentUser?.photoURL;
 
   const addNewPost = (post) => {
     setPosts((prevPosts) => [post, ...prevPosts]);
@@ -49,9 +46,9 @@ export const PostsScreen = () => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.avatarWrapper}>
-          <Image style={styles.avatarImg} source={{ uri: avatar }} />
+          <Image style={styles.avatarImg} source={{ uri: userAvatar }} />
           <View>
-            <Text style={styles.avatarName}>{login}</Text>
+            <Text style={styles.avatarName}>{userName}</Text>
             <Text style={styles.avatarEmail}>{email}</Text>
           </View>
         </View>
