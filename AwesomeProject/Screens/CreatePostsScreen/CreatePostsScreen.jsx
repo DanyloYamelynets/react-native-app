@@ -32,11 +32,17 @@ import { Ionicons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { savePostToFirebase } from "../../redux/posts/postsOperations";
+import { addDoc, collection } from "firebase/firestore";
+import { auth, db } from "../../redux/firebase/config";
+import { addPost } from "../../redux/posts/postsSlice";
+import { useDispatch } from "react-redux";
 
 export const CreatePostsScreen = () => {
   const [postImg, setPostImg] = useState(null);
   const [postTitle, setPostTitle] = useState("");
   const [postLocation, setPostLocation] = useState("");
+  const [location, setLocation] = useState(null);
+
   const [titleFocused, setTitleFocused] = useState(false);
   const [locationFocused, setLocationFocused] = useState(false);
 
@@ -45,9 +51,8 @@ export const CreatePostsScreen = () => {
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [showCamera, setShowCamera] = useState(true);
 
-  const [location, setLocation] = useState(null);
-
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const resetForm = () => {
     setPostImg(null);
@@ -56,18 +61,14 @@ export const CreatePostsScreen = () => {
     setShowCamera(true);
   };
 
+  const newPost = { postImg, postTitle, postLocation, location };
+  dispatch(addPost(newPost));
+
   const onSubmitPost = () => {
     if (!postImg || !postTitle || !postLocation)
       return Alert.alert("Будь ласка, завантажте фото та заповніть поля");
 
     console.log({ postImg, postTitle, postLocation, location });
-
-    // const newPost = {
-    //   postImg,
-    //   postTitle,
-    //   postLocation,
-    //   location,
-    // };
 
     navigation.navigate("Profile", {
       post: { postImg, postTitle, postLocation, location },
@@ -77,9 +78,28 @@ export const CreatePostsScreen = () => {
       post: { postImg, postTitle, postLocation, location },
     });
 
-    // savePostToFirebase(newPost);
+    writeDataToFirestore(newPost);
 
     resetForm();
+  };
+
+  const writeDataToFirestore = async (newPost) => {
+    const user = auth.currentUser;
+    try {
+      const docRef = await addDoc(collection(db, "posts"), {
+        userId: user.uid,
+        postTitle: newPost.postTitle,
+        postImg: newPost.postImg,
+        postLocation: newPost.postLocation,
+        location: newPost.location,
+        likes: 0,
+        comments: [],
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      throw error;
+    }
   };
 
   useEffect(() => {

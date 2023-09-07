@@ -12,15 +12,21 @@ import {
 import { Forest } from "../../Components/PostItems/Forest";
 import { Sunset } from "../../Components/PostItems/Sunset";
 import { Italy } from "../../Components/PostItems/Italy";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectEmail } from "../../redux/auth/authSelectors";
-import { auth } from "../../redux/firebase/config";
+import { auth, db } from "../../redux/firebase/config";
+import { selectPosts } from "../../redux/posts/postsSelectors";
+import { useIsFocused } from "@react-navigation/native";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { addPost } from "../../redux/posts/postsSlice";
 
 export const PostsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const newPost = route.params?.post || null;
-  const [posts, setPosts] = useState([]);
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
+  const [userPosts, setPosts] = useState([]);
 
   const email = useSelector(selectEmail);
   const userName = auth.currentUser?.displayName;
@@ -37,10 +43,34 @@ export const PostsScreen = () => {
   }, [newPost]);
 
   const updateCommentCount = (index, newCommentCount) => {
-    const updatedPosts = [...posts];
+    const updatedPosts = [...userPosts];
     updatedPosts[index].commentCount = newCommentCount;
     setPosts(updatedPosts);
   };
+
+  const fetchUserPosts = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const querySnapshot = await getDocs(
+          query(collection(db, "posts"), where("userId", "==", user.uid))
+        );
+        const posts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPosts(posts);
+      } catch (error) {
+        console.error("Error fetching user posts: ", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchUserPosts();
+    }
+  }, [isFocused]);
 
   return (
     <ScrollView>
@@ -52,7 +82,7 @@ export const PostsScreen = () => {
             <Text style={styles.avatarEmail}>{email}</Text>
           </View>
         </View>
-        {posts.map((post, index) => (
+        {userPosts.map((post, index) => (
           <View key={index}>
             <Image
               source={{ uri: post.postImg }}

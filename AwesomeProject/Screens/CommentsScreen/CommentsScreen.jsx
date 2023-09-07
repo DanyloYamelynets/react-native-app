@@ -14,30 +14,18 @@ import {
   View,
 } from "react-native";
 import CommentItem from "../../Components/CommentItem/CommentItem";
+import {
+  addCommentToFirebase,
+  getAllCommentsFromFirebase,
+} from "../../Components/AddCommentsFunc";
+import { useEffect } from "react";
 
 export const CommentsScreen = ({ route }) => {
   const { postImg, updateCommentCount } = route.params;
   const [commentText, setCommentText] = useState("");
-  const [comments, setComment] = useState([
-    // {
-    //   autorAvatar: "",
-    //   comment: "Nice photo",
-    //   date: "09 червня, 2023 | 08:40",
-    // },
-    // {
-    //   autorAvatar: "",
-    //   comment: "Cool!!",
-    //   date: "10 червня, 2023 | 11:40",
-    // },
-    // {
-    //   autorAvatar: "",
-    //   comment:
-    //     "Really love your most recent photo. I've been trying to capture the same thing for a few months and would love some tips!",
-    //   date: "16 червня, 2023 | 17:32",
-    // },
-  ]);
+  const [comments, setComment] = useState([]);
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!commentText.trim())
       return Alert.alert("Будь ласка, напишіть коментар");
 
@@ -58,11 +46,24 @@ export const CommentsScreen = ({ route }) => {
       date: formattedDate,
     };
 
-    setComment((prevComments) => [...prevComments, newComment]);
+    await addCommentToFirebase(newComment);
+
+    const commentsFromFirebase = await getAllCommentsFromFirebase();
+
+    setComment(commentsFromFirebase);
     setCommentText("");
 
-    updateCommentCount(comments.length + 1);
+    updateCommentCount(commentsFromFirebase.length + 1);
   };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      const commentsFromFirebase = await getAllCommentsFromFirebase();
+      setComment(commentsFromFirebase);
+    };
+
+    fetchComments();
+  }, []);
 
   const months = [
     "січня",

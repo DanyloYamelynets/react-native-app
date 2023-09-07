@@ -79,8 +79,21 @@ export const LoginScreen = () => {
       setState(initialState);
       return credentials.user;
     } catch (error) {
-      Alert.alert(error.message);
-      console.log(error.message);
+      setState(initialState);
+      Alert.alert(
+        "Помилка при вході",
+        "Користувача не знайдено або неправильний пароль. Бажаєте зареєструватися?",
+        [
+          {
+            text: "Так",
+            onPress: () => navigation.navigate("Registration"),
+          },
+          {
+            text: "Ні",
+            style: "cancel",
+          },
+        ]
+      );
     }
   };
 

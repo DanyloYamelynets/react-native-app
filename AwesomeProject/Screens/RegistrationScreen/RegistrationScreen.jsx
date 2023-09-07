@@ -57,7 +57,7 @@ export const RegistrationScreen = () => {
   const dispatch = useDispatch();
 
   const onChangeLogin = (text) => {
-    setState((prevState) => ({ ...prevState, login: text.trim() }));
+    setState((prevState) => ({ ...prevState, login: text }));
   };
 
   const onChangeEmail = (text) => {
@@ -96,7 +96,7 @@ export const RegistrationScreen = () => {
     fetchSignInMethodsForEmail(auth, state.email)
       .then((signInMetods) => {
         if (signInMetods.length > 0) {
-          Alert.alert("Щось пішло не так...");
+          Alert.alert("Такий користувач вже існує");
         } else {
           createUserWithEmailAndPassword(auth, state.email, state.password)
             .then((userInfo) => {

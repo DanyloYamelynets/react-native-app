@@ -26,14 +26,17 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAvatar, selectLogin } from "../../redux/auth/authSelectors";
 import { signOut } from "../../redux/auth/authSlice";
-import { auth } from "../../redux/firebase/config";
+import { auth, db } from "../../redux/firebase/config";
+import { useIsFocused } from "@react-navigation/native";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 export const ProfileScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const newPost = route.params?.post || null;
-  const [posts, setPosts] = useState([]);
+  const [userPosts, setPosts] = useState([]);
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const userName = auth.currentUser?.displayName;
   const userAvatar = auth.currentUser?.photoURL;
@@ -47,6 +50,30 @@ export const ProfileScreen = () => {
       addNewPost(newPost);
     }
   }, [newPost]);
+
+  const fetchUserPosts = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const querySnapshot = await getDocs(
+          query(collection(db, "posts"), where("userId", "==", user.uid))
+        );
+        const posts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPosts(posts);
+      } catch (error) {
+        console.error("Error fetching user posts: ", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchUserPosts();
+    }
+  }, [isFocused]);
 
   const handleLogOut = () => {
     dispatch(signOut());
@@ -99,7 +126,7 @@ export const ProfileScreen = () => {
               paddingHorizontal: 16,
             }}
           >
-            {posts.map((post, index) => (
+            {userPosts.map((post, index) => (
               <View key={index}>
                 <Image
                   source={{ uri: post.postImg }}
@@ -118,7 +145,7 @@ export const ProfileScreen = () => {
                       navigation.navigate("Comments", {
                         postImg: post.postImg,
                         updateCommentCount: (newCommentCount) => {
-                          const updatedPosts = [...posts];
+                          const updatedPosts = [...userPosts];
                           updatedPosts[index].commentCount = newCommentCount;
                           setPosts(updatedPosts);
                         },
@@ -139,7 +166,9 @@ export const ProfileScreen = () => {
                   <Pressable
                     style={styles.actionBtn}
                     onPress={() =>
-                      navigation.navigate("Map", { coordinates: post.location })
+                      navigation.navigate("Map", {
+                        coordinates: post.location,
+                      })
                     }
                   >
                     <Feather name="map-pin" size={24} color="#BDBDBD" />

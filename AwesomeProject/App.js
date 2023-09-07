@@ -18,6 +18,7 @@ import { MapScreen } from "./Screens/MapScreen/MapScreen";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./redux/store";
+import AuthChecker from "./Components/AuthChecker";
 
 const MainStack = createStackNavigator();
 
@@ -37,7 +38,12 @@ export default function App() {
       <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <NavigationContainer>
-            <MainStack.Navigator initialRouteName="Login">
+            <MainStack.Navigator initialRouteName="AuthChecker">
+              <MainStack.Screen
+                name="AuthChecker"
+                component={AuthChecker}
+                options={{ headerShown: false }}
+              />
               <MainStack.Screen
                 name="Registration"
                 component={RegistrationScreen}
