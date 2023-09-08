@@ -96,6 +96,7 @@ export const RegistrationScreen = () => {
       .then((signInMetods) => {
         if (signInMetods.length > 0) {
           Alert.alert("Такий користувач вже існує");
+          setState(initialState);
         } else {
           createUserWithEmailAndPassword(auth, state.email, state.password)
             .then((userInfo) => {
