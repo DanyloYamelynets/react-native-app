@@ -9,23 +9,17 @@ import {
   Text,
   View,
 } from "react-native";
-import { Forest } from "../../Components/PostItems/Forest";
-import { Sunset } from "../../Components/PostItems/Sunset";
-import { Italy } from "../../Components/PostItems/Italy";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectEmail } from "../../redux/auth/authSelectors";
 import { auth, db } from "../../redux/firebase/config";
-import { selectPosts } from "../../redux/posts/postsSelectors";
 import { useIsFocused } from "@react-navigation/native";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { addPost } from "../../redux/posts/postsSlice";
 
 export const PostsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const newPost = route.params?.post || null;
   const isFocused = useIsFocused();
-  const dispatch = useDispatch();
   const [userPosts, setPosts] = useState([]);
 
   const email = useSelector(selectEmail);
@@ -82,62 +76,62 @@ export const PostsScreen = () => {
             <Text style={styles.avatarEmail}>{email}</Text>
           </View>
         </View>
-        {userPosts.map((post, index) => (
-          <View key={index}>
-            <Image
-              source={{ uri: post.postImg }}
-              style={{
-                width: "100%",
-                height: 240,
-                borderRadius: 8,
-                overflow: "hidden",
-              }}
-            />
-            <Text style={styles.postTitle}>{post.postTitle}</Text>
-            <View style={styles.postItemsCont}>
-              <Pressable
-                style={styles.actionBtn}
-                onPress={() =>
-                  navigation.navigate("Comments", {
-                    postImg: post.postImg,
-                    updateCommentCount: (newCommentCount) => {
-                      updateCommentCount(index, newCommentCount);
-                    },
-                  })
-                }
-              >
-                <Ionicons
-                  name={
-                    post.commentCount
-                      ? "chatbubble-sharp"
-                      : "chatbubble-outline"
+        {userPosts.length === 0 ? (
+          <Text style={styles.noPostsText}>Створіть свою першу публікацію</Text>
+        ) : (
+          userPosts.map((post, index) => (
+            <View key={index}>
+              <Image
+                source={{ uri: post.postImg }}
+                style={{
+                  width: "100%",
+                  height: 240,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                }}
+              />
+              <Text style={styles.postTitle}>{post.postTitle}</Text>
+              <View style={styles.postItemsCont}>
+                <Pressable
+                  style={styles.actionBtn}
+                  onPress={() =>
+                    navigation.navigate("Comments", {
+                      postId: post.postId,
+                      postImg: post.postImg,
+                      updateCommentCount: (newCommentCount) => {
+                        updateCommentCount(index, newCommentCount);
+                      },
+                    })
                   }
-                  size={24}
-                  color={post.commentCount ? "#FF6C00" : "#8b8b8b"}
-                />
-                <Text style={styles.stats}>{post.commentCount || 0}</Text>
-              </Pressable>
-              <Pressable
-                style={styles.actionBtn}
-                onPress={() =>
-                  navigation.navigate("Map", { coordinates: post.location })
-                }
-              >
-                <Feather name="map-pin" size={24} color="#BDBDBD" />
-                <Text
-                  style={{ ...styles.stats, textDecorationLine: "underline" }}
                 >
-                  {post.postLocation}
-                </Text>
-              </Pressable>
+                  <Ionicons
+                    name={
+                      post.commentCount
+                        ? "chatbubble-sharp"
+                        : "chatbubble-outline"
+                    }
+                    size={24}
+                    color={post.commentCount ? "#FF6C00" : "#8b8b8b"}
+                  />
+                  <Text style={styles.stats}>{post.commentCount || 0}</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.actionBtn}
+                  onPress={() =>
+                    navigation.navigate("Map", { coordinates: post.location })
+                  }
+                >
+                  <Feather name="map-pin" size={24} color="#BDBDBD" />
+                  <Text
+                    style={{ ...styles.stats, textDecorationLine: "underline" }}
+                  >
+                    {post.postLocation}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
-        ))}
-        <View>
-          <Forest showLikeButton={false} isPostsScreen={true} />
-          <Sunset showLikeButton={false} isPostsScreen={true} />
-          <Italy showLikeButton={false} isPostsScreen={true} />
-        </View>
+          ))
+        )}
       </View>
     </ScrollView>
   );
@@ -147,8 +141,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 32,
-    backgroundColor: "#fff",
+    paddingTop: 32,
+    backgroundColor: "#ffffff",
   },
   avatarWrapper: {
     flexDirection: "row",
@@ -195,16 +189,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#212121",
   },
+  noPostsText: {
+    fontFamily: "Roboto",
+    fontSize: 18,
+    color: "#8b8b8b",
+    textAlign: "center",
+    marginTop: "50%",
+    paddingBottom: "100%",
+  },
 });
-
-// const password = useSelector(selectPassword);
-// const email = useSelector(selectEmail);
-
-// const user = await dispatch(logInUser({ email, password }));
-
-// if (user === null || user === undefined) {
-//   Alert.alert(`Такого користувача не знайдено`);
-//   return;
-// }
-
-// dispatch(logIn({ email, password }));

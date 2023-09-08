@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { TabActions, useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Button, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, TouchableOpacity, View } from "react-native";
 import { ProfileScreen } from "../ProfileScreen/ProfileScreen";
 import { CreatePostsScreen } from "../CreatePostsScreen/CreatePostsScreen";
 import { Ionicons } from "@expo/vector-icons";

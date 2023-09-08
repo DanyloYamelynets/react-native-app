@@ -19,12 +19,8 @@ import {
   UserAvatar,
   UserName,
 } from "./StyledProfileScreen";
-import { Forest } from "../../Components/PostItems/Forest";
-import { Sunset } from "../../Components/PostItems/Sunset";
-import { Italy } from "../../Components/PostItems/Italy";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAvatar, selectLogin } from "../../redux/auth/authSelectors";
+import { useDispatch } from "react-redux";
 import { signOut } from "../../redux/auth/authSlice";
 import { auth, db } from "../../redux/firebase/config";
 import { useIsFocused } from "@react-navigation/native";
@@ -37,6 +33,7 @@ export const ProfileScreen = () => {
   const [userPosts, setPosts] = useState([]);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const [likes, setLikes] = useState(0);
 
   const userName = auth.currentUser?.displayName;
   const userAvatar = auth.currentUser?.photoURL;
@@ -77,7 +74,12 @@ export const ProfileScreen = () => {
 
   const handleLogOut = () => {
     dispatch(signOut());
+    setLikes(0);
     navigation.navigate("Login");
+  };
+
+  const incrementLikes = () => {
+    setLikes(likes + 1);
   };
 
   return (
@@ -95,7 +97,6 @@ export const ProfileScreen = () => {
           <Image style={styles.avatar} source={{ uri: userAvatar }} />
           <Pressable
             style={userAvatar ? styles.btnAddAvatarLoad : styles.btnAddAvatar}
-            // onPress={onLoadAvatar}
           >
             <AddRegisterImg
               style={
@@ -139,30 +140,44 @@ export const ProfileScreen = () => {
                 />
                 <Text style={styles.postTitle}>{post.postTitle}</Text>
                 <View style={styles.postItemsCont}>
-                  <Pressable
-                    style={styles.actionBtn}
-                    onPress={() =>
-                      navigation.navigate("Comments", {
-                        postImg: post.postImg,
-                        updateCommentCount: (newCommentCount) => {
-                          const updatedPosts = [...userPosts];
-                          updatedPosts[index].commentCount = newCommentCount;
-                          setPosts(updatedPosts);
-                        },
-                      })
-                    }
-                  >
-                    <Ionicons
-                      name={
-                        post.commentCount
-                          ? "chatbubble-sharp"
-                          : "chatbubble-outline"
+                  <View style={styles.postDesc}>
+                    <Pressable
+                      style={styles.actionBtn}
+                      onPress={() =>
+                        navigation.navigate("Comments", {
+                          postId: post.postId,
+                          postImg: post.postImg,
+                          updateCommentCount: (newCommentCount) => {
+                            const updatedPosts = [...userPosts];
+                            updatedPosts[index].commentCount = newCommentCount;
+                            setPosts(updatedPosts);
+                          },
+                        })
                       }
-                      size={24}
-                      color={post.commentCount ? "#FF6C00" : "#8b8b8b"}
-                    />
-                    <Text style={styles.stats}>{post.commentCount || 0}</Text>
-                  </Pressable>
+                    >
+                      <Ionicons
+                        name={
+                          post.commentCount
+                            ? "chatbubble-sharp"
+                            : "chatbubble-outline"
+                        }
+                        size={24}
+                        color={post.commentCount ? "#FF6C00" : "#8b8b8b"}
+                      />
+                      <Text style={styles.stats}>{post.commentCount || 0}</Text>
+                    </Pressable>
+                    <Pressable
+                      style={{ ...styles.actionBtn, marginLeft: 24 }}
+                      onPress={incrementLikes}
+                    >
+                      <Feather
+                        name="thumbs-up"
+                        size={24}
+                        color={likes > 0 ? "#FF6C00" : "#8b8b8b"}
+                      />
+                      <Text style={styles.stats}>{likes}</Text>
+                    </Pressable>
+                  </View>
                   <Pressable
                     style={styles.actionBtn}
                     onPress={() =>
@@ -184,9 +199,6 @@ export const ProfileScreen = () => {
                 </View>
               </View>
             ))}
-            <Forest isPostsScreen={false} />
-            <Sunset isPostsScreen={false} />
-            <Italy isPostsScreen={false} />
           </View>
         </ScrollView>
       </ProfileCont>
@@ -227,6 +239,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 33,
+  },
+  postDesc: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   actionBtn: {
     flexDirection: "row",

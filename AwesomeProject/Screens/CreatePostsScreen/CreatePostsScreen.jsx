@@ -3,10 +3,7 @@ import {
   Alert,
   ImageBackground,
   Keyboard,
-  Pressable,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -31,7 +28,6 @@ import { Camera } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
-import { savePostToFirebase } from "../../redux/posts/postsOperations";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../../redux/firebase/config";
 import { addPost } from "../../redux/posts/postsSlice";
@@ -61,21 +57,35 @@ export const CreatePostsScreen = () => {
     setShowCamera(true);
   };
 
-  const newPost = { postImg, postTitle, postLocation, location };
+  function generateUniqueId() {
+    const timestamp = new Date().getTime();
+    const randomId = Math.floor(Math.random() * 1000000);
+    return `${timestamp}-${randomId}`;
+  }
+
+  const postId = generateUniqueId();
+
+  const newPost = {
+    postId,
+    postImg,
+    postTitle,
+    postLocation,
+    location,
+  };
   dispatch(addPost(newPost));
 
   const onSubmitPost = () => {
     if (!postImg || !postTitle || !postLocation)
       return Alert.alert("Будь ласка, завантажте фото та заповніть поля");
 
-    console.log({ postImg, postTitle, postLocation, location });
+    console.log({ postId, postImg, postTitle, postLocation, location });
 
     navigation.navigate("Profile", {
-      post: { postImg, postTitle, postLocation, location },
+      post: { postId, postImg, postTitle, postLocation, location },
     });
 
     navigation.navigate("Posts", {
-      post: { postImg, postTitle, postLocation, location },
+      post: { postId, postImg, postTitle, postLocation, location },
     });
 
     writeDataToFirestore(newPost);
@@ -87,13 +97,12 @@ export const CreatePostsScreen = () => {
     const user = auth.currentUser;
     try {
       const docRef = await addDoc(collection(db, "posts"), {
+        postId: newPost.postId,
         userId: user.uid,
         postTitle: newPost.postTitle,
         postImg: newPost.postImg,
         postLocation: newPost.postLocation,
         location: newPost.location,
-        likes: 0,
-        comments: [],
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (error) {

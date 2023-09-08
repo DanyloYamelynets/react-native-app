@@ -1,9 +1,12 @@
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../redux/firebase/config";
 
-export const addCommentToFirebase = async (comment) => {
+export const addCommentToFirebase = async (comment, postId) => {
   try {
-    const docRef = await addDoc(collection(db, "comments"), comment);
+    const docRef = await addDoc(collection(db, "comments"), {
+      ...comment,
+      postId: postId,
+    });
     console.log("Comment added with ID: ", docRef.id);
   } catch (error) {
     console.error("Error adding comment: ", error);
@@ -11,9 +14,10 @@ export const addCommentToFirebase = async (comment) => {
   }
 };
 
-export const getAllCommentsFromFirebase = async () => {
+export const getCommentsForPostFromFirebase = async (postId) => {
   const commentCollection = collection(db, "comments");
-  const querySnapshot = await getDocs(commentCollection);
+  const q = query(commentCollection, where("postId", "==", postId));
+  const querySnapshot = await getDocs(q);
   const comments = [];
   querySnapshot.forEach((doc) => {
     comments.push({ id: doc.id, ...doc.data() });

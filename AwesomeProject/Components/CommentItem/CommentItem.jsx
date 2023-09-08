@@ -3,7 +3,7 @@ import { StyleSheet, View, Image, Text, Dimensions } from "react-native";
 const CommentItem = ({ autorAvatar, comment, date }) => {
   return (
     <View style={styles.commentItem}>
-      <Image style={styles.avatar} />
+      <Image style={styles.avatar} source={{ uri: autorAvatar }} />
       <View style={styles.commentWrapper}>
         <Text style={styles.commentText}>{comment}</Text>
         <Text style={styles.commentDate}>{date}</Text>

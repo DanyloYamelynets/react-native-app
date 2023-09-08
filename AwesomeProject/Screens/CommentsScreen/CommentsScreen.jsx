@@ -5,9 +5,7 @@ import {
   FlatList,
   Image,
   Keyboard,
-  ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -16,14 +14,16 @@ import {
 import CommentItem from "../../Components/CommentItem/CommentItem";
 import {
   addCommentToFirebase,
-  getAllCommentsFromFirebase,
+  getCommentsForPostFromFirebase,
 } from "../../Components/AddCommentsFunc";
 import { useEffect } from "react";
+import { auth } from "../../redux/firebase/config";
 
 export const CommentsScreen = ({ route }) => {
-  const { postImg, updateCommentCount } = route.params;
+  const { postImg, updateCommentCount, postId } = route.params;
   const [commentText, setCommentText] = useState("");
   const [comments, setComment] = useState([]);
+  const userAvatar = auth.currentUser?.photoURL;
 
   const handleAddComment = async () => {
     if (!commentText.trim())
@@ -46,9 +46,9 @@ export const CommentsScreen = ({ route }) => {
       date: formattedDate,
     };
 
-    await addCommentToFirebase(newComment);
+    await addCommentToFirebase(newComment, postId);
 
-    const commentsFromFirebase = await getAllCommentsFromFirebase();
+    const commentsFromFirebase = await getCommentsForPostFromFirebase(postId);
 
     setComment(commentsFromFirebase);
     setCommentText("");
@@ -58,8 +58,8 @@ export const CommentsScreen = ({ route }) => {
 
   useEffect(() => {
     const fetchComments = async () => {
-      const commentsFromFirebase = await getAllCommentsFromFirebase();
-      setComment(commentsFromFirebase);
+      const commentsForThisPost = await getCommentsForPostFromFirebase(postId);
+      setComment(commentsForThisPost);
     };
 
     fetchComments();
@@ -99,7 +99,7 @@ export const CommentsScreen = ({ route }) => {
             <CommentItem
               comment={item.comment}
               date={item.date}
-              autorAvatar={item.autorAvatar}
+              autorAvatar={userAvatar}
             />
           )}
           keyExtractor={(item, idx) => idx.toString()}

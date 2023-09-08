@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { RegistrationScreen } from "./Screens/RegistrationScreen/RegistrationScreen";
 import { LoginScreen } from "./Screens/LoginScreen/LoginScreen";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Home } from "./Screens/Home/Home";
 import { CommentsScreen } from "./Screens/CommentsScreen/CommentsScreen";

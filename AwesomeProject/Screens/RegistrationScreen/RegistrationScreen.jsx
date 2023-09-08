@@ -27,7 +27,6 @@ import { AddRegisterImg } from "../../assets/svg/AddRegisterImg";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/auth/authSlice";
-import { signInUser } from "../../redux/auth/authOperations";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "firebase/storage";
